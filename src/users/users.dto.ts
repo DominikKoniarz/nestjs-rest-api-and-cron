@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const MIN_PASSWORD_LENGTH = 8;
+
 export const userIdSchema = z
   .string()
   .min(1, { message: 'Valid user ID is required' });
@@ -9,7 +11,9 @@ export const registerUserSchema = z
     email: z.string().email({ message: 'Invalid email' }),
     password: z
       .string({ invalid_type_error: 'Invalid password' })
-      .min(8, { message: 'Password must be at least 8 characters long' }),
+      .min(MIN_PASSWORD_LENGTH, {
+        message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+      }),
     repeatPassword: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -22,6 +26,14 @@ export const registerUserSchema = z
     }
   });
 
+export const loginUserSchema = z.object({
+  email: z.string().email({ message: 'Invalid email' }),
+  password: z
+    .string()
+    .min(MIN_PASSWORD_LENGTH, { message: 'Invalid password' }),
+});
+
 export type UserIdDto = z.infer<typeof userIdSchema>;
 export type RegisterUserDto = z.infer<typeof registerUserSchema>;
 export type CreateUserDto = Pick<RegisterUserDto, 'email' | 'password'>;
+export type LoginUserDto = z.infer<typeof loginUserSchema>;
