@@ -1,3 +1,4 @@
+import type { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import {
   ConflictException,
@@ -28,6 +29,22 @@ export class AuthService {
     return bcrypt.compare(plainTextPassword, hashedPassword);
   }
 
+  generateAccessToken(userId: string) {
+    return this.jwtService.signAsync({ sub: userId });
+  }
+
+  generateRefreshToken(userId: string) {
+    return this.jwtService.signAsync({ sub: userId }, { expiresIn: '1d' });
+  }
+
+  setRefreshTokenCookie(res: Response, refreshToken: string) {
+    res.cookie('auth.refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+  }
+
   async register(data: RegisterUserDto) {
     const foundUser = await this.usersService.getUserByEmail(data.email);
 
@@ -45,7 +62,7 @@ export class AuthService {
     return newUser;
   }
 
-  async login(data: LoginUserDto) {
+  async login(data: LoginUserDto, res: Response) {
     const user = await this.usersService.getUserByEmail(data.email);
 
     if (!user || !user.password) {
@@ -62,7 +79,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessToken = await this.jwtService.signAsync({ sub: user.id });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(user.id),
+      this.generateRefreshToken(user.id),
+    ]);
+
+    this.setRefreshTokenCookie(res, refreshToken);
 
     return {
       accessToken,

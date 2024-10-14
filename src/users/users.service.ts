@@ -11,7 +11,15 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async getAllUsers() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     const responseData = {
       data: users,
@@ -24,6 +32,13 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 

@@ -1,4 +1,5 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import type { Response } from 'express';
+import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   LoginUserDto,
@@ -20,7 +21,10 @@ export class AuthController {
 
   @Post('login')
   @UsePipes(new ZodValidationPipe(loginUserSchema))
-  async login(@Body() data: LoginUserDto) {
-    return this.authService.login(data);
+  async login(
+    @Body() data: LoginUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.login(data, res);
   }
 }
