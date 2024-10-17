@@ -67,6 +67,18 @@ export class UsersService {
     return user;
   }
 
+  async getUserByRefreshToken(refreshToken: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        refreshTokens: {
+          some: {
+            token: refreshToken,
+          },
+        },
+      },
+    });
+  }
+
   async createUser(user: CreateUserDto) {
     const foundUser = await this.getUserByEmail(user.email);
 
