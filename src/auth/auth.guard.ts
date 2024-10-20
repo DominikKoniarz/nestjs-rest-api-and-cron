@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
 
-      request['user'] = payload;
+      request['user'] = foundUser;
     } catch {
       // error instance of JsonWebTokenError if token is invalid
       throw new UnauthorizedException({

@@ -1,6 +1,6 @@
 import {
   PipeTransform,
-  // ArgumentMetadata,
+  ArgumentMetadata,
   BadRequestException,
 } from '@nestjs/common';
 import { ZodError, ZodSchema } from 'zod';
@@ -8,10 +8,12 @@ import { ZodError, ZodSchema } from 'zod';
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}
 
-  transform(
-    value: unknown,
-    // metadata: ArgumentMetadata
-  ) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
+    // If the type is not body, we don't need to validate
+    if (metadata.type !== 'body') {
+      return value;
+    }
+
     try {
       const parsedValue = this.schema.parse(value);
       return parsedValue;

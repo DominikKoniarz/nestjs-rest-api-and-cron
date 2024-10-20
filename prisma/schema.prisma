@@ -47,4 +47,6 @@ model Post {
   updatedAt DateTime @updatedAt
 
   author User @relation(fields: [authorId], references: [id])
+
+  @@index([title, authorId])
 }

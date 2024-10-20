@@ -1,3 +1,6 @@
+import { z } from 'zod';
+import { userSchema } from './auth.dto';
+
 export type JwtConstants = {
   secret: string;
   refreshTokenCookieName: string;
@@ -12,3 +15,5 @@ export type AccessTokenPayload = {
 export type RefreshTokenPayload = {
   sub: string;
 };
+
+export type AuthedUser = z.infer<typeof userSchema>;
