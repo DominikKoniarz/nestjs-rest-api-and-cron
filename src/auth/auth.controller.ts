@@ -1,5 +1,13 @@
 import type { Request, Response } from 'express';
-import { Body, Controller, Post, Req, Res, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   LoginUserDto,
@@ -34,5 +42,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.refreshAccessToken(req, res);
+  }
+
+  @Get('logout')
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(req, res);
   }
 }

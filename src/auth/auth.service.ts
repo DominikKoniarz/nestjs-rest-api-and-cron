@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import {
   ConflictException,
   ForbiddenException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -165,5 +166,20 @@ export class AuthService {
 
       throw new UnauthorizedException({ message: 'Invalid refresh token' });
     }
+  }
+
+  async logout(req: Request, res: Response) {
+    const refreshToken = req.cookies[jwtConstants.refreshTokenCookieName] as
+      | string
+      | undefined;
+
+    if (refreshToken) {
+      await this.refreshTokensService.deleteRefreshToken(refreshToken);
+      this.clearRefreshTokenCookie(res);
+    }
+
+    res.status(HttpStatus.NO_CONTENT);
+
+    return;
   }
 }
