@@ -11,8 +11,8 @@ import {
 import { PostsService } from './posts.service';
 import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
 import { CreatePostDto, createPostSchema } from './posts.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/decorators/user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('posts')
 export class PostsController {

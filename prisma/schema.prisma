@@ -5,48 +5,54 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        String   @id @default(cuid())
+    email     String   @unique
+    name      String?
+    password  String
+    role      Role
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  posts         Post[]
-  refreshTokens RefreshToken[]
+    posts         Post[]
+    refreshTokens RefreshToken[]
 
-  @@index([id])
+    @@index([id])
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  userId    String   @db.VarChar(255)
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime
+    id        String   @id @default(cuid())
+    userId    String   @db.VarChar(255)
+    token     String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    expiresAt DateTime
 
-  user User @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id])
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        String   @id @default(cuid())
+    title     String
+    content   String
+    authorId  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  author User @relation(fields: [authorId], references: [id])
+    author User @relation(fields: [authorId], references: [id])
 
-  @@index([title, authorId])
+    @@index([title, authorId])
+}
+
+enum Role {
+    USER
+    ADMIN
 }
