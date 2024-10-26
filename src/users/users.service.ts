@@ -16,6 +16,7 @@ export class UsersService {
         id: true,
         email: true,
         name: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -37,6 +38,7 @@ export class UsersService {
         id: true,
         email: true,
         name: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -76,6 +78,14 @@ export class UsersService {
           },
         },
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
@@ -95,7 +105,9 @@ export class UsersService {
         id: true,
         email: true,
         name: true,
+        role: true,
         createdAt: true,
+        updatedAt: true,
       },
     });
   }

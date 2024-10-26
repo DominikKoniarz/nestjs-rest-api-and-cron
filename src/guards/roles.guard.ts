@@ -1,4 +1,5 @@
 import type { Role } from '@prisma/client';
+import type { AuthedUser } from 'src/auth/auth.types';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
@@ -7,19 +8,23 @@ import { ROLES_KEY } from 'src/decorators/roles.decorator';
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  // TODO: do this bc this is only coppied
-
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles = this.reflector.getAllAndOverride<Role[] | undefined>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
-    if (!requiredRoles) {
+    if (!requiredRoles || !requiredRoles.length) {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.roles?.includes(role));
+    const request = context.switchToHttp().getRequest();
+    const user = request?.user as AuthedUser | undefined;
+
+    if (!user) {
+      return false;
+    }
+
+    return requiredRoles.some((role) => user.role === role);
   }
 }
