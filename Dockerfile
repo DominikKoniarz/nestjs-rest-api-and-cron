@@ -6,12 +6,12 @@ COPY package.json .
 
 RUN npm install
 
-COPY . .
+COPY prisma ./prisma
 
 RUN npx prisma generate
 
-RUN npm run build
+COPY . .
 
-# Won't work bc wrong db url
+RUN npm run build
 
 CMD [ "npm", "run", "start" ]

@@ -9,19 +9,26 @@ export class DiskService {
 
   async listCwd() {
     const things = await fsp.readdir(this.cwdPath);
-    console.log('things:', things);
 
     return things;
   }
 
   async listUploads() {
     const things = await fsp.readdir(this.uploadsPath);
-    console.log('things:', things);
 
-    const data = `${new Date().toISOString()}\n`;
+    const data = `${new Date().toISOString()}`;
 
-    await fsp.appendFile(path.join(this.uploadsPath, 'log.txt'), data);
+    await fsp.writeFile(path.join(this.uploadsPath, 'log.txt'), data);
 
     return things;
+  }
+
+  async listUploadsLog() {
+    const log = await fsp.readFile(
+      path.join(this.uploadsPath, 'log.txt'),
+      'utf-8',
+    );
+
+    return log;
   }
 }

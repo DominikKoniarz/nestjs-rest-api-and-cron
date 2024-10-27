@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { DiskService } from './disk.service';
 
+// Only in purpose of playing with docker volumes
 @Controller('disk')
 export class DiskController {
   constructor(private diskService: DiskService) {}
@@ -20,6 +21,15 @@ export class DiskController {
 
     return {
       things,
+    };
+  }
+
+  @Get('/uploads/log')
+  async getUploadsLog() {
+    const log = await this.diskService.listUploadsLog();
+
+    return {
+      log,
     };
   }
 }
