@@ -2,13 +2,17 @@ import type { AuthedUser } from 'src/auth/auth.types';
 import {
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './posts.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class PostsService {
+  private readonly logger = new Logger(PostsService.name);
+
   constructor(private prisma: PrismaService) {}
 
   getPostByTitle(title: string, authorId: string) {
@@ -64,5 +68,16 @@ export class PostsService {
     if (!post) throw new NotFoundException('Post not found');
 
     return post;
+  }
+
+  async getPostsCount() {
+    return this.prisma.post.count();
+  }
+
+  @Cron('30 * * * * *')
+  async handlePostsCountLogCron() {
+    const postsCount = await this.getPostsCount();
+
+    this.logger.log(`Posts count: ${postsCount}`);
   }
 }

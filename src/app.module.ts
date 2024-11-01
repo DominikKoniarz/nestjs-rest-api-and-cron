@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
 import { PostsModule } from './posts/posts.module';
 import { DiskModule } from './disk/disk.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DiskModule } from './disk/disk.module';
     RefreshTokensModule,
     PostsModule,
     DiskModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}
