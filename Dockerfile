@@ -20,6 +20,8 @@ WORKDIR /app
 
 COPY --from=base /app/package.json .
 COPY --from=base /app/node_modules ./node_modules
+# COPY --from=base /app/node_modules/@prisma/client ./node_modules/@prisma/client
+# COPY --from=base /app/node_modules/.bin ./node_modules/.bin
 COPY --from=base /app/dist ./dist
 COPY --from=base /app/tsconfig.json .
 COPY --from=base /app/tsconfig.build.json .
